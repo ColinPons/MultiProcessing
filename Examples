@@ -1,0 +1,31 @@
+import concurrent.futures
+import time
+
+start = time.perf_counter()
+
+def do_something(seconds):                                              # The task to be created as a function in order for it to be passed by pool executor
+    print(f"Sleeping {seconds} second(s)...")
+    time.sleep(seconds)
+    return f"Done sleeping...{seconds}"
+
+## ProcessPoolExecutor can be used for processor intensive tasks
+## ThreadPoolExecutor can be used for IO (input/output) intestive tasks
+
+if __name__ == "__main__":
+    with concurrent.futures.ProcessPoolExecutor() as exec:
+        results = [exec.submit(do_something, 1) for _ in range(5)]      # completes in ~1.33 seconds, use if you dont need processes to be completed in order
+
+        #secs = [5, 4, 3, 2, 1]
+        #results = [exec.submit(do_something, sec) for sec in secs]     # completes in ~5.31 seconds, use if you need processes to be completed in order they where completed
+
+        #for f in concurrent.futures.as_completed(results):             # use for the above two methods
+        #    print(f.result())
+
+        #secs = [5, 4, 3, 2, 1]
+        #results = exec.map(do_something, secs)                         # completes in ~5.3 seconds, use if you need processes to be completed in order they where started
+        #for result in results:
+        #    print(result)
+
+finish = time.perf_counter()
+
+print(f"Finished in {round(finish-start,2)} second(s)")
